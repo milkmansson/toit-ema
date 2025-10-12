@@ -1,4 +1,4 @@
-# Simple Exponential Moving Average (EMA) Function for Toit
+# Exponential Moving Average (EMA) Function for Toit
 
 This method is a _memory-optimised_ way of calculating a simple average.
 
@@ -15,17 +15,25 @@ samples are added.
 - Provide a function that computes a smoothed average of a value stream using O(1)
 memory and O(1) time per sample, avoiding any history buffers.
 - Address the problem of relevance - eg, if our linear history was a 10 value
-window for our averge calculation, the value 11th value would be dropped and
+window for our average calculation, the value 11th value would be dropped and
 become completely irrelevant.
 
 One could argue that the maths are simple enough to not warrant a library like
 this.  I needed to do this on a number of projects so decided to make it its own
 class - and added some extra to help the next guy.
 
+In addition, there is an excellent class in the main Toit library, called
+'Statistics'.  However the docs state that this requires a byte array to be
+supplied.  This function seeks to deal with an unspecified number of integers,
+floats and other values.
+
 ## Features
 ### Basic use
 For basic use, we must first configure a value for alpha, set it, and then add values and get the running average.  Basic use case:
-```
+```Toit
+//Import the library
+import ema show *
+
 // Instantiate the object:
 ema := Ema
 
@@ -38,13 +46,13 @@ ema.add 2
 ema.add 3  --log  // Value will be displayed, alongside the average
 ema.add 3
 
-// Use the average caluclated:
+// Use the average calculated:
 print "Result: $(ema.average)
 ```
 So to assist with caluclating the alpha, the library provides these functions:
 
 ### Alpha Calculation Helper: "Window"
-Lets say we want the average to feels like it really only looks at the last '20'
+Let's say we want the average to feels like it really only looks at the last '20'
 points.  The alpha would be 2 / (20 + 1) = 0.095.  Code:
 ```Toit
 // To calculate approximate 20-point average: alpha = 2/21 = 0.095.
@@ -70,10 +78,7 @@ print (ema.compute-alpha-from-halflife 14 --set)
 ```
 
 ### Alpha Calculation Helper: "Coverage"
-Lets say, we want 30 new samples to account for 85% of the average.  Give
-`--percent-weight=x` where x is a percent decimal between 0.0 and 1.0.  In other
-words, a low value would give less emphasis on recent samples, where a number
-closer to 1.0 would give extreme emphasis on recent samples.
+Want the last n samples to account for x of total weight (e.g., x=0.85 for 85%)?
 ```Toit
 // Caluclate the alpha for 30 samples, with ALL older values not accounting
 // for more than 1% of the present average.  In addition, set the value ready
@@ -86,7 +91,7 @@ print (ema.compute-alpha-from-coverage 30 --percent-weight=0.01 --set)
 ```
 
 ### Alpha Calculation Helper: Display Results
-To make it really clear, this function shows a table for n samples, of the % weight of each sample up to the nth.  Don't supply a value to have it use the objects' current alpha value.
+To make it really clear, this function shows a table for n samples, of the % weight of each sample up to the nth.  Don't supply a value to have it use the objects' current alpha value.  Note that results are not normalised - The sum of all these percentages will not be 100.  The values keep getting smaller as is seen below.
 ```Toit
 // Caluclate the alpha for 30 samples, with ALL older values not accounting
 // for more than 15% of the average.  Set the value ready for use in the object:
@@ -121,7 +126,7 @@ For other use cases please see the examples folder.
 
 ## Issues
 If there are any issues, changes, or any other kind of feedback, please
-[raise an issue](toit-ema/issues). Feedback is welcome and appreciated!
+[raise an issue](https://github.com/milkmansson/toit-ema/issues). Feedback is welcome and appreciated!
 
 ## Disclaimer
 - All trademarks belong to their respective owners.

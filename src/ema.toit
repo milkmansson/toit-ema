@@ -94,10 +94,10 @@ class Ema:
     if set: set-alpha computed-alpha
     return computed-alpha
 
-  compute-alpha-from-coverage samples/int --percent-weight/float --set=false -> float:
-    assert: 0 < percent-weight <= 1.0
+  compute-alpha-from-coverage samples/int --recent-coverage/float --set=false -> float:
+    assert: 0 < recent-coverage <= 1.0
     if samples <= 0: return 1.0           // minimum one sample
-    computed-alpha := 1.0 - (math.pow (1.0 - percent-weight) (1.0 / samples))
+    computed-alpha := 1.0 - (math.pow (1.0 - recent-coverage) (1.0 / samples))
     if set: set-alpha computed-alpha
     return computed-alpha
 

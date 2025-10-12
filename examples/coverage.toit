@@ -13,4 +13,4 @@ main:
   // for more than 1% of the present average.  In addition, set the value ready
   // for use in the object:
   ema := Ema
-  print (ema.compute-alpha-from-coverage 30 --percent-weight=0.01 --set)
+  print (ema.compute-alpha-from-coverage 30 --recent-coverage=0.01 --set)
