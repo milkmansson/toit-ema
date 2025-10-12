@@ -1,0 +1,4 @@
+name: ema
+description: Implementation of an Exponential Moving Average function.
+environment:
+  sdk: ^2.0.0-alpha.188
