@@ -7,7 +7,6 @@ import math
 
 /**
 Exponential Moving Average (EMA) Implementation.
-
 See README.md
 */
 
@@ -96,6 +95,9 @@ class Ema:
     if set: set-alpha computed-alpha
     return computed-alpha
 
+  /**
+  function to help calculate an alpha value given a number of samples and percent:
+  */
   compute-alpha-from-coverage samples/int --recent-coverage/float --set=false -> float:
     assert: 0 < recent-coverage <= 1.0
     if samples <= 0: return 1.0
@@ -104,18 +106,8 @@ class Ema:
     return computed-alpha
 
   /**
-  function showing weighting for each sample (of n) given alpha value 'a'.
-
-  Prints a table of values of the weightings of the nth sample to help
-  understand the weights of samples given the alpha value. See README.md
-
-  compute-ema-weights-from-alpha a/float=alpha_ --n/int=last-used-n_ -> none:
-    if last-used-n_ != n: last-used-n_ = n
-    for k := n - 1; k >= 0; k -= 1:
-      w := a * (math.pow (1.0 - a) k)
-      print "$(%02d k + 1): \t$(%2.5f w * 100)%"
+  function to show the effect of an alpha:
   */
-
   compute-ema-weights-from-alpha a/float=alpha_ --n/int=last-used-n_ -> none:
     if last-used-n_ != n: last-used-n_ = n
     running-total/float := 0.0
