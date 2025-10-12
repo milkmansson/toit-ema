@@ -16,7 +16,7 @@ class Ema:
   alpha_/float?      := null  // the tuning knob: 0 < alpha <= 1
   value_/float?      := null  // this value persists between calls
   steps_/int         := 0     // this value persists between calls
-  last-n_/int        := 10
+  last-used-n_/int   := 10
 
   constructor --alpha/float?=null --logger/log.Logger=log.default:
     logger_ = logger.with-name "ema"
@@ -31,17 +31,17 @@ class Ema:
   add x/any --log=false -> none:
     if alpha_ == null:
       logger_.error "add: alpha not set."
+      return
+
+    xf/float := (x is int) ? x.to-float : x
+
     if value_ == null:
-        if x is int:
-          value_ = x.to-float  // initialize on first sample, or require debiasing.
-        else:
-          value_ = x
-        steps_ += 1
-        //logger_.debug "add: initialised with value $(%0.3f x) (pos $steps_)"
+        value_ = x
+        //logger_.debug "add: initialised with value $(%0.3f x) (pos $steps_ + 1)"
     else:
         value_ = (1.0 - alpha_) * value_ + alpha_ * x
-        steps_ += 1
-        //logger_.debug "add: added value \t$(%0.3f x) \t(pos $steps_)  \t Average: $value_"
+        //logger_.debug "add: added value \t$(%0.3f x) \t(pos $steps_ + 1)  \t Average: $value_"
+    steps_ += 1
     if log:
       print "[ema] INFO: add [$(%03d steps_)]: x=$(%0.4f x) \t avg=$(%0.4f value_)"
   /**
@@ -80,6 +80,7 @@ class Ema:
   function to help calculate an alpha value given a sample window:
   */
   compute-alpha-from-window samples/int --table=false --set=false -> float:
+    if samples < 1: return 1.0
     computed-alpha := 2.0 / (samples + 1)
     if table: compute-ema-weights-from-alpha computed-alpha
     if set: set-alpha computed-alpha
@@ -89,6 +90,7 @@ class Ema:
   function to help calculate an alpha value given a half life:
   */
   compute-alpha-from-halflife samples/int --table=false --set=false -> float:
+    if samples <= 0: return 1.0
     computed-alpha := 1.0 - (math.pow 0.5 (1.0 / samples))
     if table: compute-ema-weights-from-alpha computed-alpha
     if set: set-alpha computed-alpha
@@ -96,7 +98,7 @@ class Ema:
 
   compute-alpha-from-coverage samples/int --recent-coverage/float --set=false -> float:
     assert: 0 < recent-coverage <= 1.0
-    if samples <= 0: return 1.0           // minimum one sample
+    if samples <= 0: return 1.0
     computed-alpha := 1.0 - (math.pow (1.0 - recent-coverage) (1.0 / samples))
     if set: set-alpha computed-alpha
     return computed-alpha
@@ -106,9 +108,18 @@ class Ema:
 
   Prints a table of values of the weightings of the nth sample to help
   understand the weights of samples given the alpha value. See README.md
-  */
-  compute-ema-weights-from-alpha a/float=alpha_ --n/int=last-n_ -> none:
-    if last-n_ != n: last-n_ = n
-    for k := n; k > 0; k -= 1:
+
+  compute-ema-weights-from-alpha a/float=alpha_ --n/int=last-used-n_ -> none:
+    if last-used-n_ != n: last-used-n_ = n
+    for k := n - 1; k >= 0; k -= 1:
       w := a * (math.pow (1.0 - a) k)
-      print "$(%02d k): \t$(%2.5f w * 100)%"
+      print "$(%02d k + 1): \t$(%2.5f w * 100)%"
+  */
+
+  compute-ema-weights-from-alpha a/float=alpha_ --n/int=last-used-n_ -> none:
+    if last-used-n_ != n: last-used-n_ = n
+    running-total/float := 0.0
+    for k := 0; k < n; k += 1:
+      weight := a * (math.pow (1.0 - a) k)
+      running-total += weight
+      print "$(%02d k + 1): \t$(%2.5f weight * 100)% \t (total $(%0.5f running-total * 100)%)"

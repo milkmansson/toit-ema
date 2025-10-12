@@ -91,34 +91,35 @@ print (ema.compute-alpha-from-coverage 30 --percent-weight=0.01 --set)
 ```
 
 ### Alpha Calculation Helper: Display Results
-To make it really clear, this function shows a table for n samples, of the % weight of each sample up to the nth.  Don't supply a value to have it use the objects' current alpha value.  Note that results are not normalised - The sum of all these percentages will not be 100.  The values keep getting smaller as is seen below.
+To make it really clear, this function shows a table for n samples, of the % weight of each sample up to the nth.  Don't supply a value to have it use the objects' current alpha value.  Note that results are not normalised - The sum of all these percentages will not be 100.  The values keep getting smaller as is seen below.  Set n to be as many as is necessary to see the distribution.
 ```Toit
 // Caluclate the alpha for 30 samples, with ALL older values not accounting
 // for more than 15% of the average.  Set the value ready for use in the object:
 ema := Ema
 ema.compute-ema-weights-from-alpha .31 --n=20
 
-// prints the n'th sample number vs, its weight in the average:
-20:     0.01855%
-19:     0.02688%
-18:     0.03896%
-17:     0.05647%
-16:     0.08184%
-15:     0.11860%
-14:     0.17189%
-13:     0.24911%
-12:     0.36104%
-11:     0.52324%
-10:     0.75832%
-09:     1.09901%
-08:     1.59277%
-07:     2.30837%
-06:     3.34546%
-05:     4.84850%
-04:     7.02681%
-03:     10.18378%
-02:     14.75910%
-01:     21.39000%
+// prints the n'th sample number vs, its weight in the average, and a running
+// total - at sample 11, all later/older values only account for just over 1%.
+01:     31.00000%        (total 31.00000%)
+02:     21.39000%        (total 52.39000%)
+03:     14.75910%        (total 67.14910%)
+04:     10.18378%        (total 77.33288%)
+05:     7.02681%         (total 84.35969%)
+06:     4.84850%         (total 89.20818%)
+07:     3.34546%         (total 92.55365%)
+08:     2.30837%         (total 94.86202%)
+09:     1.59277%         (total 96.45479%)
+10:     1.09901%         (total 97.55381%)
+11:     0.75832%         (total 98.31213%)
+12:     0.52324%         (total 98.83537%)
+13:     0.36104%         (total 99.19640%)
+14:     0.24911%         (total 99.44552%)
+15:     0.17189%         (total 99.61741%)
+16:     0.11860%         (total 99.73601%)
+17:     0.08184%         (total 99.81785%)
+18:     0.05647%         (total 99.87431%)
+19:     0.03896%         (total 99.91328%)
+20:     0.02688%         (total 99.94016%)
 ```
 
 ### Other Examples:
