@@ -2,7 +2,7 @@
 
 This method is a _memory-optimised_ way of calculating a simple average.
 
-## The Problem:
+## Problem
 To construct an average, normally we would have to keep a number of values in
 memory, add them up, and then divide by how many there are.  ('Linear average'.)
 With a larger number of samples, it can take some memory space on some already
@@ -11,21 +11,26 @@ total type way, without having to keep a large number of historical values (or
 manage their rotation) - at the expense of extra CPU usage at the time the
 samples are added.
 
-## The Solution:
+## Solution
 - Provide a function that computes a smoothed average of a value stream using O(1)
 memory and O(1) time per sample, avoiding any history buffers.
 - Address the problem of relevance - eg, if our linear history was a 10 value
 window for our average calculation, the value 11th value would be dropped and
 become completely irrelevant.
 
+### Caveats
 One could argue that the maths are simple enough to not warrant a library like
-this.  I needed to do this on a number of projects so decided to make it its own
+this.  If this is your level of skill, please rob what you need, and go for gold.
+I needed to do this on a number of projects so decided to make it its own
 class - and added some extra to help the next guy.
 
 In addition, there is an excellent class in the main Toit library, called
-'Statistics'.  However the docs state that this requires a byte array to be
-supplied.  This function seeks to deal with an unspecified number of integers,
-floats and other values.
+[Statistics](https://libs.toit.io/statistics/class-OnlineStatistics).  The
+docs for this one show that it requires the values to be supplied in a byte
+array.  Check it out in case its good for your scenario.  This library seeks
+to deal with an unspecified number of integers, floats and other values, whilst
+providing some functions to help with configuration.
+
 
 ## Features
 ### Basic use
