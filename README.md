@@ -26,10 +26,10 @@ class - and added some extra to help the next guy.
 
 In addition, there is an excellent class in the main Toit library, called
 [Statistics](https://libs.toit.io/statistics/class-OnlineStatistics).  The
-docs for this one show that it requires the values to be supplied in a byte
-array.  Check it out in case its good for your scenario.  This library seeks
-to deal with an unspecified number of integers, floats and other values, whilst
-providing some functions to help with configuration.
+docs for this one show that it requires values to be supplied in a byte
+array.  Check it out in case its good for your scenario.  This EMA library
+however  seeks to deal with an unspecified number of integers, floats and
+other values, whilst providing some helper functions to help with configuration.
 
 
 ## Features
