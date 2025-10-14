@@ -56,7 +56,17 @@ print "Result: $(ema.average)
 ```
 To assist with calculating the alpha, the library provides these functions:
 
-### Alpha Calculation Helper: "Window"
+### Alpha Value
+For a linear average, we would have a fixed set of values.  Any values not in
+that set would not count.  In the case of a moving average, the alpha helps us
+define what that set looks like, of all the samples it collects.  It is
+essentially the slider between 'care a lot about the newest dat' and 'remember
+the past more.'  A great way to visualise it is with the feature
+`compute-ema-weights-from-alpha`, documented below.
+
+**Note:** this value is a number between 0 and 1.
+
+#### Alpha Calculation Helper: "Window"
 Let's say we want the average to feels like it really only looks at the last '20'
 points.  The alpha would be 2 / (20 + 1) = 0.095.  Code:
 ```Toit
@@ -68,7 +78,7 @@ print ema.compute-alpha-from-window 20
 0.095
 ```
 
-### Alpha Calculation Helper: "Half Life"
+#### Alpha Calculation Helper: "Half Life"
 Lets say, after H new samples, say 14, we want a sample’s weight to halve: in
 this case, alpha would be 1 - 0.5^(1/14)
 ```Toit
@@ -81,7 +91,7 @@ print (ema.compute-alpha-from-halflife 14 --set)
 0.048304846989380423317
 ```
 
-### Alpha Calculation Helper: "Coverage"
+#### Alpha Calculation Helper: "Coverage"
 Want the last n samples to account for x of total weight (e.g., x=0.85 for 85%)?
 ```Toit
 // Caluclate the alpha for 30 samples, with ALL older values not accounting
@@ -94,7 +104,7 @@ print (ema.compute-alpha-from-coverage 30 --percent-weight=0.01 --set)
 0.00033495508513226024405
 ```
 
-### Alpha Calculation Helper: Display Results
+#### Alpha Calculation Helper: Display Results
 To make it really clear, this function shows a table for n samples, of the % weight of each sample up to the nth.  Don't supply a value to have it use the objects' current alpha value.  Note that results are not normalised - The sum of all these percentages will not be 100.  The values keep getting smaller as is seen below.  Set n to be as many as is necessary to see the distribution.
 ```Toit
 // Caluclate the alpha for 30 samples, with ALL older values not accounting
