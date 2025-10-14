@@ -58,7 +58,7 @@ class Ema:
     assert: 0 < a <= 1.0
     alpha_ = a
     reset
-    logger_.debug "set-alpha: New alpha set." --tags={"alpha" : alpha_}
+    //logger_.debug "set-alpha: New alpha set." --tags={"alpha" : alpha_}
 
   /**
   returns the current average value in the ema.
@@ -72,7 +72,7 @@ class Ema:
   /**
   Returns the number of values seen by the moving average.
   */
-  values -> int:
+  samples -> int:
     return steps_
 
   /**

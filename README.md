@@ -49,18 +49,17 @@ ema.add 3
 // Use the average calculated:
 print "Result: $(ema.average)
 ```
-So to assist with caluclating the alpha, the library provides these functions:
+To assist with calculating the alpha, the library provides these functions:
 
 ### Alpha Calculation Helper: "Window"
 Let's say we want the average to feels like it really only looks at the last '20'
 points.  The alpha would be 2 / (20 + 1) = 0.095.  Code:
 ```Toit
 // To calculate approximate 20-point average: alpha = 2/21 = 0.095.
-// First, construct the ema object
 ema := Ema
 print ema.compute-alpha-from-window 20
 
-// prints
+// Alpha value printed
 0.095
 ```
 
@@ -73,7 +72,7 @@ this case, alpha would be 1 - 0.5^(1/14)
 ema := Ema
 print (ema.compute-alpha-from-halflife 14 --set)
 
-// prints
+// Alpha value printed
 0.048304846989380423317
 ```
 
@@ -86,7 +85,7 @@ Want the last n samples to account for x of total weight (e.g., x=0.85 for 85%)?
 ema := Ema
 print (ema.compute-alpha-from-coverage 30 --percent-weight=0.01 --set)
 
-// prints
+// Alpha value printed
 0.00033495508513226024405
 ```
 
@@ -100,6 +99,7 @@ ema.compute-ema-weights-from-alpha .31 --n=20
 
 // prints the n'th sample number vs, its weight in the average, and a running
 // total - at sample 11, all later/older values only account for just over 1%.
+// The 20th sample now has .05% weight in the present calculation.
 01:     31.00000%        (total 31.00000%)
 02:     21.39000%        (total 52.39000%)
 03:     14.75910%        (total 67.14910%)
