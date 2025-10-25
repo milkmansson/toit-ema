@@ -168,10 +168,10 @@ shown below.
 alpha := 0.25
 
 // Construct the ema object, giving an alpha value at instantiation
-ema := Ema test-alpha
+ema := Ema alpha
 
 // Print coverage table
-ema.compute-ema-weights-from-alpha test-alpha --n=20
+ema.compute-ema-weights-from-alpha alpha --n=20
 
 // Set required coverage for `is-warmed` to 97%
 ema.set-required-coverage 0.97
