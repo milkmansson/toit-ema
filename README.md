@@ -164,7 +164,7 @@ for them is not desireable).  The automatic reset of the object to zero has been
 removed, and the `set-required-coverage`, `is-warmed`, and `coverage` functions
 have have been added to allow the user to gate the readiness of the result as
 shown below.
-```
+```Toit
 alpha := 0.25
 
 // Construct the ema object, giving an alpha value at instantiation
