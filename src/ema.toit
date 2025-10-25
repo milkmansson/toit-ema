@@ -100,9 +100,7 @@ class Ema:
       alpha_ = null
     if steps_ > 0:
       if not quiet_: logger_.warn "set-alpha: ema changing after getting samples - read README.md."
-    else:
-      alpha_ = alpha
-    reset
+    alpha_ = alpha
     //logger_.debug "set-alpha: New alpha set." --tags={"alpha" : alpha_}
 
   /**
@@ -132,6 +130,8 @@ class Ema:
   coverage alpha/float?=alpha_ --steps/int?=steps_ -> float:
     if alpha == null:
       logger_.warn "coverage: alpha not set. Must be set before use."
+      return 0.0
+    if steps == null: steps = 1
     value := 1.0 - (math.pow (1.0 - alpha) steps)
     value = clamp-value_ value --lower=0.0 --upper=1.0
     return value
@@ -145,7 +145,7 @@ class Ema:
   is evaluated.
   */
   set-required-coverage percent/float --alpha/float?=alpha_ -> none:
-    assert: 0 < percent < 1.0
+    assert: 0 < percent <= 1.0
     if alpha == null:
       logger_.error "steps-for-coverage: alpha not set."
       return
@@ -299,7 +299,7 @@ class Ema:
     candidate/any := null
     values.do:
       if candidate == null: candidate = it
-      if it > candidate: it = candidate
+      if it > candidate: candidate = it
     return candidate
 
   /**
@@ -309,7 +309,7 @@ class Ema:
     candidate/any := null
     values.do:
       if candidate == null: candidate = it
-      if it < candidate: it = candidate
+      if it < candidate: candidate = it
     return candidate
 
   /**
@@ -323,4 +323,5 @@ class Ema:
   Rounds the given value down to the nearest integer.
   */
   floor_ x/float -> int:
-    return x.to-int      // truncates down
+    i := x.to-int
+    return (x < i.to-float) ? (i - 1) : i
