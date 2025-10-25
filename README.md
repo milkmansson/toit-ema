@@ -160,7 +160,10 @@ influence on the current average) no longer follow a clean curve.
 
 Legitimate reasons for this might be where the required alpha might mean a
 number of samples are required before the average would make sense (and waiting
-for them is not desireable).  Therefore, `set-required-coverage`, `is-warmed`, and `coverage` functions have have been added:
+for them is not desireable).  The automatic reset of the object to zero has been
+removed, and the `set-required-coverage`, `is-warmed`, and `coverage` functions
+have have been added to allow the user to gate the readiness of the result as
+shown below.
 ```
 alpha := 0.25
 
@@ -176,13 +179,13 @@ ema.set-required-coverage 0.97
 // add some samples
 // add some samples
 
-// display current coverage:
-print "Whats my Coverage? $(ema.coverage)"
+// Display current coverage.  This value will get close to 1.0 but never reach:
+print "Whats my current coverage? $(ema.coverage)"
 
 // add some samples
 // add some samples
 
-// test if the ema is warmed up:
+// Test if the ema is warmed up:
 print "Am I warmed up? $(ema.is-warmed)"
 ```
 A runnable worked example exists in `warm-up.toit`, in the examples folder.
