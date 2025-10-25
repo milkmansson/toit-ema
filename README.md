@@ -34,7 +34,8 @@ other values, whilst providing some helper functions to help with configuration.
 
 ## Features
 ### Basic use
-For basic use, we must first configure a value for alpha, set it, and then add values and get the running average.  Basic use case:
+For basic use, we must first configure a value for alpha, set it, and then add
+values and get the running average.  Basic use case:
 ```Toit
 //Import the library
 import ema show *
@@ -95,26 +96,40 @@ print (ema.compute-alpha-from-halflife 14 --set)
 Want the last n samples to account for x of total weight (e.g., x=0.85 for 85%)?
 ```Toit
 // Caluclate the alpha for 30 samples, with ALL older values not accounting
-// for more than 1% of the present average.  In addition, set the value ready
+// for more than 15% of the present average.  In addition, set the value ready
 // for use in the object:
-ema := Ema
-print (ema.compute-alpha-from-coverage 30 --percent-weight=0.01 --set)
+ema := Ema --quiet
 
-// Alpha value printed
-0.00033495508513226024405
+// Print alpha value given coverage:
+print (ema.compute-alpha-from-coverage 30 --coverage=0.85 --set)
+
+// Prints:
+0.06127934198046303127
 ```
+A runnable worked example exists in `from-coverage.toit`, in the examples folder.
 
 #### Alpha Calculation Helper: Display Results
-To make it really clear, this function shows a table for n samples, of the % weight of each sample up to the nth.  Don't supply a value to have it use the objects' current alpha value.  Note that results are not normalised - The sum of all these percentages will not be 100.  The values keep getting smaller as is seen below.  Set n to be as many as is necessary to see the distribution.
+To make it really clear, this function shows a table for n samples, of the %
+weight of each sample up to the nth.  Don't supply a value to have it use the
+objects' current alpha value.  Note that results are not normalised - The sum of
+all these percentages will not be 100.  The values keep getting smaller as is
+seen below.  Set n to be as many as is necessary to see the distribution.
 ```Toit
 // Caluclate the alpha for 30 samples, with ALL older values not accounting
 // for more than 15% of the average.  Set the value ready for use in the object:
 ema := Ema
 ema.compute-ema-weights-from-alpha .31 --n=20
-
-// prints the n'th sample number vs, its weight in the average, and a running
-// total - at sample 11, all later/older values only account for just over 1%.
-// The 20th sample now has .05% weight in the present calculation.
+```
+Output looks like the below.  The left column prints the n'th sample number
+vs, its weight in the compiled average and then a running total of the
+percentages.  In the below example:
+ - With alpha .31, by sample 11 we see that all later/older samples together
+   account for just over 1% of the present average.
+ - The 20th sample now has .05% weight in the present average.
+ - The percentages are not 'normalised' on purpose.  The weights mathematically
+   eventually become so small so as to be insignificant, however theoretically
+   never become zero.
+```Text
 01:     31.00000%        (total 31.00000%)
 02:     21.39000%        (total 52.39000%)
 03:     14.75910%        (total 67.14910%)
@@ -136,6 +151,41 @@ ema.compute-ema-weights-from-alpha .31 --n=20
 19:     0.03896%         (total 99.91328%)
 20:     0.02688%         (total 99.94016%)
 ```
+
+#### Warming up: AKA 'Changing the Alpha after samples have been added'
+Changing the alpha value after adding samples rarely makes sense unless the EMA
+is intended to be an adaptive or multi-speed filter.  It would invalidate the
+traditional meaning of the 'average': the 'weights' of the older samples (their
+influence on the current average) no longer follow a clean curve.
+
+Legitimate reasons for this might be where the required alpha might mean a
+number of samples are required before the average would make sense (and waiting
+for them is not desireable).  Therefore, `set-required-coverage`, `is-warmed`, and `coverage` functions have have been added:
+```
+alpha := 0.25
+
+// Construct the ema object, giving an alpha value at instantiation
+ema := Ema test-alpha
+
+// Print coverage table
+ema.compute-ema-weights-from-alpha test-alpha --n=20
+
+// Set required coverage for `is-warmed` to 97%
+ema.set-required-coverage 0.97
+
+// add some samples
+// add some samples
+
+// display current coverage:
+print "Whats my Coverage? $(ema.coverage)"
+
+// add some samples
+// add some samples
+
+// test if the ema is warmed up:
+print "Am I warmed up? $(ema.is-warmed)"
+```
+A runnable worked example exists in `warm-up.toit`, in the examples folder.
 
 ### Other Examples:
 For other use cases please see the examples folder.

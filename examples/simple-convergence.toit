@@ -5,12 +5,14 @@
 import ema show *
 
 /**
-Simple example of the use of an ema, showing convergence:
+Simple example of the use of an ema, showing convergence of the average after
+giving a number of values, final ones staying the same to show how quickly the
+average gets close to that value:
 */
 
 main:
   // construct the ema object, giving an alpha value at instantiation
-  ema := Ema --alpha=0.37
+  ema := Ema 0.37
 
   ema.add 53.33 --log
   ema.add 72.50 --log
