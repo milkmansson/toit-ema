@@ -9,7 +9,6 @@ import math
 Exponential Moving Average (EMA) Implementation.
 See README.md
 */
-
 class Ema:
   logger_/log.Logger          := ?
   alpha_/float?               := null  // the tuning knob: 0 < alpha <= 1
@@ -83,15 +82,15 @@ class Ema:
   Sets the alpha value.  (0 < alpha <= 1.0)
 
   Note: changing the alpha value after some data is collected means the EMA
-  becomes a 'piecewise exponential weighting' with discontinuity at the moment
-  the alpha is changed.  This means the 'weights' of the older samples (their
-  influence on the current average) no longer follow a clean exponential curve,
-  and the average is no longer an 'average'.
+    becomes a 'piecewise exponential weighting' with discontinuity at the moment
+    the alpha is changed.  This means the 'weights' of the older samples (their
+    influence on the current average) no longer follow a clean exponential
+    curve, and the average is no longer an 'average'.
 
   A legitimate use for this is where a large number of samples are required before
-  there are enough samples for the target alpha, but waiting for them is not
-  possible.  Therefore this function does not prevent changing the alpha after
-  values have been added, and the user is advised to consider this.
+    there are enough samples for the target alpha, but waiting for them is not
+    possible.  Therefore this function does not prevent changing the alpha after
+    values have been added, and the user is advised to consider this.
   */
   set-alpha alpha/float -> none:
     assert: 0 <= alpha <= 1.0
@@ -125,7 +124,7 @@ class Ema:
   Returns current coverage (0.0 < percent < 1.0)
 
   Computed given the current number of number of samples and the current alpha.
-  If values given, will calculate coverage for the given values.
+    If values are given, will calculate coverage for the given values.
   */
   coverage alpha/float?=alpha_ --steps/int?=steps_ -> float:
     if alpha == null:
@@ -140,9 +139,9 @@ class Ema:
   Sets threshold (steps) for desired coverage.
 
   This method sets the number of samples required to meet the % coverage, and is
-  compared every time (`is-warmed`) is evaluated.  Minimum steps are cached
-  instead of doing the log math in $coverage every time the test (`is-warmed`)
-  is evaluated.
+    compared every time (`is-warmed`) is evaluated.  Minimum steps are cached
+    instead of doing the log math in $coverage every time the test (`is-warmed`)
+    is evaluated.
   */
   set-required-coverage percent/float --alpha/float?=alpha_ -> none:
     assert: 0 < percent <= 1.0
@@ -187,9 +186,9 @@ class Ema:
   /**
   function to help calculate an alpha value given a sample window.
 
-  Use the `--set` flag to set the calculated example as the new alpha value.
-  Use the `--table` flag to have it print a table of the results.  See
-  $compute-alpha-from-coverage.
+  - Use the `--set` flag to set the calculated example as the new alpha value.
+  - Use the `--table` flag to have it print a table of the results.  See
+    $compute-alpha-from-coverage.
   */
   compute-alpha-from-window samples/int --table/bool=false --set/bool=false -> float:
     if samples < 1: return 1.0
@@ -201,9 +200,9 @@ class Ema:
   /**
   function to help calculate an alpha value given a half life.
 
-  Use the `--set` flag to set the calculated example as the new alpha value.
-  Use the `--table` flag to have it print a table of the results.  See
-  $compute-alpha-from-coverage.
+  - Use the `--set` flag to set the calculated example as the new alpha value.
+  - Use the `--table` flag to have it print a table of the results.  See
+    $compute-alpha-from-coverage.
   */
   compute-alpha-from-halflife samples/int --table/bool=false --set/bool=false -> float:
     if samples <= 0: return 1.0
@@ -215,7 +214,7 @@ class Ema:
   /**
   function to help calculate an alpha value given a number of samples and percent.
 
-  Use the `--set` flag to set the calculated example as the new alpha value.
+  - Use the `--set` flag to set the calculated example as the new alpha value.
   */
   compute-alpha-from-coverage samples/int --coverage/float --set/bool=false -> float:
     assert: 0 < coverage <= 1.0
@@ -229,15 +228,19 @@ class Ema:
   /**
   function to show the effect of an alpha.
 
-  ```Toit
-  // Caluclate the alpha for 30 samples, with ALL older values not accounting
-  // for more than 15% of the average.  Set the value ready for use in the object:
+  Example: Caluclate the alpha for 30 samples, with ALL older values not
+    accounting for more than 15% of the average.  Set the value ready for use
+    in the object:
+  ```
   ema := Ema
   ema.compute-ema-weights-from-alpha .31 --n=20
+  ```
 
-  // prints the n'th sample number vs, its weight in the average, and a running
-  // total - at sample 11, all later/older values only account for just over 1%.
-  // The 20th sample now has .05% weight in the present calculation.
+  This example prints the n'th sample number vs, its weight in the average, and
+    a running total - at sample 11, all later/older values only account for just
+    over 1%. The 20th sample now has .05% weight in the present calculation. The
+    result will look like:
+  ```
   01:     31.00000%        (total 31.00000%)
   02:     21.39000%        (total 52.39000%)
   03:     14.75910%        (total 67.14910%)
